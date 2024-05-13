@@ -1,0 +1,31 @@
+package goorm.honjaya.domain.board.entity;
+
+import goorm.honjaya.domain.base.BaseEntity;
+import goorm.honjaya.domain.image.entity.BoardImage;
+import goorm.honjaya.domain.member.entity.Member;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+public class Board extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
+    private Long id;
+
+    private String title;
+
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @OneToMany(mappedBy = "board")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board")
+    private List<BoardImage> boardImages = new ArrayList<>();
+}
