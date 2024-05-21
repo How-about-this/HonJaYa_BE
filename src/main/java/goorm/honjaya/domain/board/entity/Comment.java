@@ -1,7 +1,7 @@
 package goorm.honjaya.domain.board.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
-import goorm.honjaya.domain.member.entity.Member;
+import goorm.honjaya.domain.user.entity.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +19,6 @@ public class Comment extends BaseEntity {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 }

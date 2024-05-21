@@ -2,7 +2,7 @@ package goorm.honjaya.domain.board.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.image.entity.BoardImage;
-import goorm.honjaya.domain.member.entity.Member;
+import goorm.honjaya.domain.user.entity.User;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class Board extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private User user;
 
     @OneToMany(mappedBy = "board")
     private List<Comment> comments = new ArrayList<>();

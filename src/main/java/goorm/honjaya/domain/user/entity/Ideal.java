@@ -1,4 +1,4 @@
-package goorm.honjaya.domain.member.entity;
+package goorm.honjaya.domain.user.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ public class Ideal extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
+    @Column(name = "ideal_id")
     private Long id;
 
     private LocalDate birthday;
@@ -32,6 +32,6 @@ public class Ideal extends BaseEntity {
     private String address;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 }

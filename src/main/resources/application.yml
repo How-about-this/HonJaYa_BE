@@ -1,2 +1,10 @@
-
-
+spring:
+  profiles:
+    active: dev
+    group:
+      dev:
+        - jwt
+        - oauth
+      prod:
+        - jwt
+        - oauth
