@@ -1,4 +1,4 @@
-package goorm.honjaya.domain.member.entity;
+package goorm.honjaya.domain.user.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
 import jakarta.persistence.*;
@@ -32,6 +32,6 @@ public class Profile extends BaseEntity {
     private String address;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 }
