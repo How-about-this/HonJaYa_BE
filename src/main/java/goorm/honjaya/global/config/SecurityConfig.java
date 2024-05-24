@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -60,8 +61,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/login", "/api/join", "/api/reissue", "/api/h2-console/**", "/api/ws/**", "/api/oauth2/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers(new AntPathRequestMatcher("/api/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/join")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/h2-console/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/ws/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/oauth2/**")).permitAll()
+                        .anyRequest().authenticated()
+                );
 
         http
                 .headers(header -> header
