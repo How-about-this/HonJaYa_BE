@@ -15,5 +15,5 @@ public class Item extends BaseEntity {
 
     private int itemAmount;
 
-    private String desc;
+    private String description;
 }
