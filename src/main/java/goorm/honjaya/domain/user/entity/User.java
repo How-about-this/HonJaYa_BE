@@ -60,5 +60,4 @@ public class User extends BaseEntity {
         this.profileImages.add(profileImage);
         profileImage.setUser(this);
     }
-
 }
