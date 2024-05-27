@@ -1,7 +1,4 @@
 spring:
-  mvc:
-    servlet:
-      path: /api
   config:
     activate:
       on-profile: prod
@@ -24,3 +21,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: 6379
+server:
+  servlet:
+    context-path: /api

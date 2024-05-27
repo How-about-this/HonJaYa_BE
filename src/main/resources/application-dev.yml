@@ -25,7 +25,7 @@ spring:
             client-name: kakao
             client-id: f80b172c8fd2c4405878f3227740f910
             client-secret: qOvMqL5ksCA74HfLsBkLf6A7LLTWAYcs
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: http://localhost:8080/api/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope:
               - profile_nickname
@@ -43,3 +43,6 @@ spring:
       port: 6379
   jwt:
     secret: O9HnV8bd+WBo6ZNFKqcKjDPAkCGXb6JWTc7Pv7IUWy4=
+server:
+  servlet:
+    context-path: /api
