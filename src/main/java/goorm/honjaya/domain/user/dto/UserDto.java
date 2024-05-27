@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class UserDto {
 
+    private Long id;
+
     private String username;
 
     private String name;
@@ -20,7 +22,8 @@ public class UserDto {
     private String profileImage;
 
     @Builder
-    private UserDto(String username, String name, String token, String role, String status, String profileImage) {
+    private UserDto(Long id, String username, String name, String token, String role, String status, String profileImage) {
+        this.id = id;
         this.username = username;
         this.name = name;
         this.token = token;
