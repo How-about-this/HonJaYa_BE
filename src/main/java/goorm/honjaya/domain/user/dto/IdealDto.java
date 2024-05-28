@@ -9,8 +9,6 @@ import java.time.LocalDate;
 @Data
 public class IdealDto {
 
-    private Long id;
-
     private LocalDate birthday;
 
     private String gender;
@@ -30,8 +28,7 @@ public class IdealDto {
     private String address;
 
     @Builder
-    private IdealDto(Long id, LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
-        this.id = id;
+    private IdealDto(LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
         this.birthday = birthday;
         this.gender = gender;
         this.height = height;
@@ -45,7 +42,6 @@ public class IdealDto {
 
     public static IdealDto from(Ideal ideal) {
         return IdealDto.builder()
-                .id(ideal.getId())
                 .birthday(ideal.getBirthday())
                 .gender(ideal.getGender())
                 .height(ideal.getHeight())
@@ -59,7 +55,6 @@ public class IdealDto {
 
     public Ideal toIdeal() {
         return Ideal.builder()
-                .id(id)
                 .birthday(birthday)
                 .gender(gender)
                 .height(height)

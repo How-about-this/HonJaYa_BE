@@ -6,6 +6,7 @@ import goorm.honjaya.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,7 +16,7 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/user/{id}/profile")
-    public ApiResponse<?> save(@PathVariable("id") Long id, ProfileDto profileDto) {
+    public ApiResponse<?> save(@PathVariable("id") Long id, @RequestBody ProfileDto profileDto) {
         profileService.save(id, profileDto);
         return ApiResponse.success();
     }
