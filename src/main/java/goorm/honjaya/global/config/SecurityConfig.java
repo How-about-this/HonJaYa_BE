@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/ws/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/oauth2/**")).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         http
