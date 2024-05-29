@@ -24,3 +24,8 @@ spring:
 server:
   servlet:
     context-path: /api
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
