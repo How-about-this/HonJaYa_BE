@@ -23,6 +23,8 @@ public class RestTemplateConfig {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
         requestFactory.setProxy(proxy);
+        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(10000);
 
         return new RestTemplate(requestFactory);
     }
