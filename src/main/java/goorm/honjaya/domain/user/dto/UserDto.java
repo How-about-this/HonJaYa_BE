@@ -34,6 +34,7 @@ public class UserDto {
 
     public static UserDto of(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .name(user.getName())
                 .token(user.getToken())
