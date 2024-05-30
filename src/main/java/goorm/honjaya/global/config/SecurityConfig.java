@@ -112,8 +112,8 @@ public class SecurityConfig {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("krmp-proxy.9rum.cc", 3128));
         requestFactory.setProxy(proxy);
-        requestFactory.setConnectTimeout(10000);
-        requestFactory.setReadTimeout(10000);
+//        requestFactory.setConnectTimeout(10000);
+//        requestFactory.setReadTimeout(10000);
 
         RestTemplate restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
         restTemplate.setRequestFactory(requestFactory);
