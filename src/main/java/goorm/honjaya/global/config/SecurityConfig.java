@@ -1,27 +1,33 @@
 package goorm.honjaya.global.config;
 
 import goorm.honjaya.domain.user.service.CustomOAuth2UserService;
-import goorm.honjaya.global.auth.CustomOAuth2AccessTokenResponseClient;
 import goorm.honjaya.global.auth.CustomSuccessHandler;
 import goorm.honjaya.global.filter.JwtFilter;
 import goorm.honjaya.global.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -35,8 +41,6 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
-
-    private final CustomOAuth2AccessTokenResponseClient customOAuth2AccessTokenResponseClient;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,7 +66,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .tokenEndpoint(tokenEndpointConfig -> tokenEndpointConfig
-                                .accessTokenResponseClient(customOAuth2AccessTokenResponseClient)));
+                                .accessTokenResponseClient(customAccessTokenResponseClient())));
 
         http
                 .authorizeHttpRequests((auth) -> auth
@@ -100,5 +104,21 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> customAccessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("krmp-proxy.9rum.cc", 3128));
+        requestFactory.setProxy(proxy);
+        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(10000);
+
+        RestTemplate restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
+        restTemplate.setRequestFactory(requestFactory);
+        client.setRestOperations(restTemplate);
+
+        return client;
     }
 }
