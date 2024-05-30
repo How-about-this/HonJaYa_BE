@@ -1,6 +1,7 @@
 package goorm.honjaya.global.auth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2AccessTokenResponseClient implements OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
 
     private final RestTemplate restTemplate;
@@ -25,6 +27,7 @@ public class CustomOAuth2AccessTokenResponseClient implements OAuth2AccessTokenR
         // 토큰 요청 엔드포인트에 대한 요청을 수행
         // `requestEntityConverter`와 `restOperations.exchange`를 이용하여 구현
 
+        log.info("proxy 적용");
         // 예시 구현
         RequestEntity<?> request = new OAuth2AuthorizationCodeGrantRequestEntityConverter().convert(authorizationGrantRequest);
         ResponseEntity<OAuth2AccessTokenResponse> response;
