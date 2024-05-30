@@ -7,6 +7,7 @@ import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.auth.KakaoResponse;
 import goorm.honjaya.global.auth.OAuth2Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -17,12 +18,16 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
+        log.info(userRequest.toString());
+
         // 부모 클래스의 메서드를 사용하여 객체를 생성함.
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
