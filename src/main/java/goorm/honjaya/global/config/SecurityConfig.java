@@ -1,6 +1,7 @@
 package goorm.honjaya.global.config;
 
 import goorm.honjaya.domain.user.service.CustomOAuth2UserService;
+import goorm.honjaya.global.auth.CustomOAuth2AccessTokenResponseClient;
 import goorm.honjaya.global.auth.CustomSuccessHandler;
 import goorm.honjaya.global.filter.JwtFilter;
 import goorm.honjaya.global.util.JwtUtil;
@@ -35,6 +36,8 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    private final CustomOAuth2AccessTokenResponseClient customOAuth2AccessTokenResponseClient;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -57,7 +60,9 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(customSuccessHandler)
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)));
+                                .userService(customOAuth2UserService))
+                        .tokenEndpoint(tokenEndpointConfig -> tokenEndpointConfig
+                                .accessTokenResponseClient(customOAuth2AccessTokenResponseClient)));
 
         http
                 .authorizeHttpRequests((auth) -> auth
