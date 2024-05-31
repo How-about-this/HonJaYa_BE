@@ -5,8 +5,11 @@ import goorm.honjaya.global.auth.CustomSuccessHandler;
 import goorm.honjaya.global.filter.JwtFilter;
 import goorm.honjaya.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,14 +29,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
@@ -106,7 +114,8 @@ public class SecurityConfig {
         return source;
     }
 
-    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> customAccessTokenResponseClient() {
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> customAccessTokenResponseClient() {
         DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
@@ -117,8 +126,39 @@ public class SecurityConfig {
 
         RestTemplate restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
         restTemplate.setRequestFactory(requestFactory);
+        restTemplate.setInterceptors(Collections.singletonList(loggingInterceptor()));
         client.setRestOperations(restTemplate);
 
         return client;
+    }
+
+    private ClientHttpRequestInterceptor loggingInterceptor() {
+        return (request, body, execution) -> {
+            logRequestDetails(request, body);
+            ClientHttpResponse response = execution.execute(request, body);
+            logResponseDetails(response);
+            return response;
+        };
+    }
+
+    private void logRequestDetails(org.springframework.http.HttpRequest request, byte[] body) throws IOException {
+        log.info("URI         : {}", request.getURI());
+        log.info("Method      : {}", request.getMethod());
+        log.info("Headers     : {}", request.getHeaders());
+        log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
+    }
+
+    private void logResponseDetails(ClientHttpResponse response) throws IOException {
+        StringBuilder inputStringBuilder = new StringBuilder();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                inputStringBuilder.append(line);
+                inputStringBuilder.append('\n');
+                line = bufferedReader.readLine();
+            }
+        }
+        log.info("Response status code: {}", response.getStatusCode());
+        log.info("Response body       : {}", inputStringBuilder.toString());
     }
 }
