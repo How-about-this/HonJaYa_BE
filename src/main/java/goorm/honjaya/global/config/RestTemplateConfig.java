@@ -41,7 +41,7 @@ public class RestTemplateConfig {
         restTemplate.setInterceptors(Collections.singletonList(loggingInterceptor()));
         log.info("Proxy settings applied: {}", proxy);
 
-        return new RestTemplate(requestFactory);
+        return restTemplate;
     }
 
     private ClientHttpRequestInterceptor loggingInterceptor() {
