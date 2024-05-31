@@ -42,7 +42,6 @@ import java.util.Collections;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Slf4j
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
@@ -50,8 +49,6 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
-
-    private final RestTemplate restTemplate;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -75,9 +72,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(customSuccessHandler)
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .tokenEndpoint(tokenEndpointConfig -> tokenEndpointConfig
-                                .accessTokenResponseClient(customAccessTokenResponseClient())));
+                                .userService(customOAuth2UserService)));
 
         http
                 .authorizeHttpRequests((auth) -> auth
@@ -115,14 +110,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> customAccessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
-        restTemplate.setMessageConverters(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
-        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
-        client.setRestOperations(restTemplate);
-        return client;
     }
 }

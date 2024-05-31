@@ -22,13 +22,9 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
-        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
-        super.setRestOperations(restTemplate);
 
         // 부모 클래스의 메서드를 사용하여 객체를 생성함.
         OAuth2User oAuth2User = super.loadUser(userRequest);
