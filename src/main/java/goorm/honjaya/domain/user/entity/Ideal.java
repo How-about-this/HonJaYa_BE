@@ -16,13 +16,17 @@ public class Ideal extends BaseEntity {
     @Column(name = "ideal_id")
     private Long id;
 
-    private LocalDate birthday;
+    private int maxAge;
 
-    private String gender;
+    private int minAge;
 
-    private int height;
+    private int maxHeight;
 
-    private int weight;
+    private int minHeight;
+
+    private int maxWeight;
+
+    private int minWeight;
 
     private String mbti;
 
@@ -32,24 +36,24 @@ public class Ideal extends BaseEntity {
 
     private boolean smoke;
 
-    private String address;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @Setter
     private User user;
 
     @Builder
-    public Ideal(Long id, LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
+    private Ideal(Long id, int maxAge, int minAge, int maxHeight, int minHeight, int maxWeight, int minWeight, String mbti, String religion, String drinkAmount, boolean smoke, User user) {
         this.id = id;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.height = height;
-        this.weight = weight;
+        this.maxAge = maxAge;
+        this.minAge = minAge;
+        this.maxHeight = maxHeight;
+        this.minHeight = minHeight;
+        this.maxWeight = maxWeight;
+        this.minWeight = minWeight;
         this.mbti = mbti;
         this.religion = religion;
         this.drinkAmount = drinkAmount;
         this.smoke = smoke;
-        this.address = address;
+        this.user = user;
     }
 }

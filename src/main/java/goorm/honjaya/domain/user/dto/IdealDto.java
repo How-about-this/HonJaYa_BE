@@ -9,13 +9,17 @@ import java.time.LocalDate;
 @Data
 public class IdealDto {
 
-    private LocalDate birthday;
+    private int maxAge;
 
-    private String gender;
+    private int minAge;
 
-    private int height;
+    private int maxHeight;
 
-    private int weight;
+    private int minHeight;
+
+    private int maxWeight;
+
+    private int minWeight;
 
     private String mbti;
 
@@ -25,27 +29,28 @@ public class IdealDto {
 
     private boolean smoke;
 
-    private String address;
-
     @Builder
-    private IdealDto(LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
-        this.birthday = birthday;
-        this.gender = gender;
-        this.height = height;
-        this.weight = weight;
+    private IdealDto(int maxAge, int minAge, int maxHeight, int minHeight, int maxWeight, int minWeight, String mbti, String religion, String drinkAmount, boolean smoke) {
+        this.maxAge = maxAge;
+        this.minAge = minAge;
+        this.maxHeight = maxHeight;
+        this.minHeight = minHeight;
+        this.maxWeight = maxWeight;
+        this.minWeight = minWeight;
         this.mbti = mbti;
         this.religion = religion;
         this.drinkAmount = drinkAmount;
         this.smoke = smoke;
-        this.address = address;
     }
 
     public static IdealDto from(Ideal ideal) {
         return IdealDto.builder()
-                .birthday(ideal.getBirthday())
-                .gender(ideal.getGender())
-                .height(ideal.getHeight())
-                .weight(ideal.getWeight())
+                .maxAge(ideal.getMaxAge())
+                .minAge(ideal.getMinAge())
+                .maxHeight(ideal.getMaxHeight())
+                .minHeight(ideal.getMinHeight())
+                .maxWeight(ideal.getMaxWeight())
+                .minWeight(ideal.getMinWeight())
                 .mbti(ideal.getMbti())
                 .religion(ideal.getReligion())
                 .drinkAmount(ideal.getDrinkAmount())
@@ -55,10 +60,12 @@ public class IdealDto {
 
     public Ideal toIdeal() {
         return Ideal.builder()
-                .birthday(birthday)
-                .gender(gender)
-                .height(height)
-                .weight(weight)
+                .maxAge(maxAge)
+                .minAge(minAge)
+                .maxHeight(maxHeight)
+                .minHeight(minHeight)
+                .maxWeight(maxWeight)
+                .minWeight(minWeight)
                 .mbti(mbti)
                 .religion(religion)
                 .drinkAmount(drinkAmount)
