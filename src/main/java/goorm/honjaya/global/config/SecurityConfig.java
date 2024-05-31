@@ -127,6 +127,7 @@ public class SecurityConfig {
         RestTemplate restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
         restTemplate.setRequestFactory(requestFactory);
         restTemplate.setInterceptors(Collections.singletonList(loggingInterceptor()));
+        log.info("Proxy settings applied: {}", proxy);
         client.setRestOperations(restTemplate);
 
         return client;
