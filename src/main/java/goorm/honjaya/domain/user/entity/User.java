@@ -30,7 +30,9 @@ public class User extends BaseEntity {
 
     private String role;
 
-    private String status;
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();
@@ -45,7 +47,7 @@ public class User extends BaseEntity {
     private Ideal ideal;
 
     @Builder
-    private User(Long id, String username, String name, String token, String role, String status, Profile profile, Ideal ideal) {
+    private User(Long id, String username, String name, String token, String role, UserStatus status, Profile profile, Ideal ideal) {
         this.id = id;
         this.username = username;
         this.name = name;

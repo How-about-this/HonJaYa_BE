@@ -1,6 +1,7 @@
 package goorm.honjaya.domain.user.dto;
 
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.entity.UserStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,12 +18,12 @@ public class UserDto {
 
     private String role;
 
-    private String status;
+    private UserStatus status;
 
     private String profileImage;
 
     @Builder
-    private UserDto(Long id, String username, String name, String token, String role, String status, String profileImage) {
+    private UserDto(Long id, String username, String name, String token, String role, UserStatus status, String profileImage) {
         this.id = id;
         this.username = username;
         this.name = name;

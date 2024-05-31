@@ -2,6 +2,7 @@ package goorm.honjaya.domain.user.service;
 
 import goorm.honjaya.domain.image.entity.ProfileImage;
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.entity.UserStatus;
 import goorm.honjaya.domain.user.repository.UserRepository;
 import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.auth.KakaoResponse;
@@ -49,7 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .name(oAuth2Response.getName())
                     .token(accessToken)
                     .role("ROLE_USER")
-                    .status("NEW")
+                    .status(UserStatus.NEW)
                     .build();
 
             user.addProfileImage(new ProfileImage(oAuth2Response.getProfileImage()));
