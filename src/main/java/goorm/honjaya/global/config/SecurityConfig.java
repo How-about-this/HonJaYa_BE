@@ -20,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -49,6 +50,8 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
+
+    private final RestTemplate restTemplate;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -117,49 +120,9 @@ public class SecurityConfig {
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> customAccessTokenResponseClient() {
         DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
-
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("krmp-proxy.9rum.cc", 3128));
-        requestFactory.setProxy(proxy);
-//        requestFactory.setConnectTimeout(10000);
-//        requestFactory.setReadTimeout(10000);
-
-        RestTemplate restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
-        restTemplate.setRequestFactory(requestFactory);
-        restTemplate.setInterceptors(Collections.singletonList(loggingInterceptor()));
-        log.info("Proxy settings applied: {}", proxy);
+        restTemplate.setMessageConverters(Arrays.asList(new FormHttpMessageConverter(), new OAuth2AccessTokenResponseHttpMessageConverter()));
+        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         client.setRestOperations(restTemplate);
-
         return client;
-    }
-
-    private ClientHttpRequestInterceptor loggingInterceptor() {
-        return (request, body, execution) -> {
-            logRequestDetails(request, body);
-            ClientHttpResponse response = execution.execute(request, body);
-            logResponseDetails(response);
-            return response;
-        };
-    }
-
-    private void logRequestDetails(org.springframework.http.HttpRequest request, byte[] body) throws IOException {
-        log.info("URI         : {}", request.getURI());
-        log.info("Method      : {}", request.getMethod());
-        log.info("Headers     : {}", request.getHeaders());
-        log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
-    }
-
-    private void logResponseDetails(ClientHttpResponse response) throws IOException {
-        StringBuilder inputStringBuilder = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))) {
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                inputStringBuilder.append(line);
-                inputStringBuilder.append('\n');
-                line = bufferedReader.readLine();
-            }
-        }
-        log.info("Response status code: {}", response.getStatusCode());
-        log.info("Response body       : {}", inputStringBuilder.toString());
     }
 }
