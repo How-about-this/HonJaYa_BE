@@ -26,4 +26,7 @@ server:
     context-path: /api
 logging:
   level:
-    root: debug
+    org:
+      springframework:
+        security: debug
+        web: debug
