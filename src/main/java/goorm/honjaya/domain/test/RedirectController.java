@@ -16,6 +16,6 @@ public class RedirectController {
     @GetMapping("/redirect")
     public void redirect(HttpServletResponse response) throws IOException {
         log.info("리다이렉트 호출");
-        response.sendRedirect("/redirect");
+        response.sendRedirect("https://k2b3bc621690aa.user-app.krampoline.com/redirect");
     }
 }
