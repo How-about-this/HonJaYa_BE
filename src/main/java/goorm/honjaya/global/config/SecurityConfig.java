@@ -79,10 +79,9 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/join")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/ws/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/oauth2/**")).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         http
