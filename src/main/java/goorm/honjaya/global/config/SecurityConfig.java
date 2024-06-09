@@ -61,12 +61,11 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/login")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/join")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/reissue")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/reissue")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/ws/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/oauth2/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/oauth2/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                         .anyRequest().authenticated()
                 );
 
