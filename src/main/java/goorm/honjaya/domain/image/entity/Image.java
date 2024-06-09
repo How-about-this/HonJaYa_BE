@@ -46,9 +46,6 @@ public abstract class Image extends BaseEntity{
     @Setter
     private String imageUrl;
 
-    @Setter
-    private Boolean deleted = Boolean.FALSE;
-
     protected Image() {
         this(null, null, null, null);
     }

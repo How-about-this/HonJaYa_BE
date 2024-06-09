@@ -53,8 +53,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .status(UserStatus.NEW)
                     .build();
 
-            ProfileImage profileImage = ProfileImage.builder().build();
-            profileImage.setImageUrl(oAuth2Response.getProfileImage());
+            ProfileImage profileImage = ProfileImage.builder()
+                    .imageUrl(oAuth2Response.getProfileImage())
+                    .isPrimary(true)
+                    .build();
 
             user.addProfileImage(profileImage);
 

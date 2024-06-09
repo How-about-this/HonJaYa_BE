@@ -1,5 +1,6 @@
 package goorm.honjaya.domain.user.dto;
 
+import goorm.honjaya.domain.image.entity.ProfileImage;
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.domain.user.entity.UserStatus;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class UserDto {
         this.profileImage = profileImage;
     }
 
-    public static UserDto of(User user) {
+    public static UserDto from(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -41,7 +42,11 @@ public class UserDto {
                 .token(user.getToken())
                 .role(user.getRole())
                 .status(user.getStatus())
-                .profileImage(user.getProfileImages().get(0).getImageUrl())
+                .profileImage(user.getProfileImages().stream()
+                        .filter(ProfileImage::isPrimary)
+                        .findAny()
+                        .get()
+                        .getImageUrl())
                 .build();
     }
 }

@@ -22,7 +22,7 @@ public class ProfileService {
 
     @Transactional
     public void save(Long id, ProfileDto profileDto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFountException("유저를 찾을 수 없습니다."));
+        User user = userRepository.findById(id).orElseThrow(UserNotFountException::new);
         user.setStatus(UserStatus.ACTIVE);
         Profile profile = profileDto.toProfile();
         profile.setUser(user);

@@ -11,8 +11,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @Entity
-@Where(clause = "deleted = false")
-@SQLDelete(sql = "update BoardImage set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("B")
 public class BoardImage extends Image {

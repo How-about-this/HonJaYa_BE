@@ -17,10 +17,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/user/current")
+    @GetMapping("/users/current")
     public ApiResponse<UserDto> findCurrentUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws UserNotFountException {
         String username = customOAuth2User.getUsername();
-        User user = userService.findByUsername(username).orElseThrow(() -> new UserNotFountException("로그인된 유저를 찾을 수 없습니다."));
-        return ApiResponse.success(UserDto.of(user));
+        UserDto userDto = userService.findByUsername(username);
+        return ApiResponse.success(userDto);
     }
 }

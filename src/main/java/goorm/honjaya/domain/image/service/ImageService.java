@@ -1,16 +1,22 @@
 package goorm.honjaya.domain.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import goorm.honjaya.domain.board.entity.Board;
+import goorm.honjaya.domain.board.exception.BoardNotFoundException;
+import goorm.honjaya.domain.board.repository.BoardRepository;
+import goorm.honjaya.domain.image.dto.ProfileImageDto;
 import goorm.honjaya.domain.image.entity.BoardImage;
 import goorm.honjaya.domain.image.entity.Image;
 import goorm.honjaya.domain.image.entity.ProfileImage;
+import goorm.honjaya.domain.image.exception.ProfileImageNotFoundException;
 import goorm.honjaya.domain.image.repository.BoardImageRepository;
 import goorm.honjaya.domain.image.repository.ProfileImageRepository;
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.exception.UserNotFountException;
+import goorm.honjaya.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,26 +40,39 @@ public class ImageService {
 
     private final ProfileImageRepository profileImageRepository;
     private final BoardImageRepository boardImageRepository;
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Transactional(readOnly = true)
+    public List<ProfileImageDto> findProfileImages(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
+        return user.getProfileImages().stream()
+                .map(ProfileImageDto::from)
+                .collect(Collectors.toList());
+    }
+
     @Transactional // 이 경우
-    public List<ProfileImage> saveProfileImages(User user, List<MultipartFile> multipartFile){
+    public List<ProfileImageDto> saveProfileImages(Long userId, List<MultipartFile> multipartFile) {
+
+        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
 
         if (multipartFile != null) {
-            List<ProfileImage> profileImages = multipartFile.stream()
+            return multipartFile.stream()
                     .map(image -> (ProfileImage) saveImage(image, "profile", user, null))
+                    .map(ProfileImageDto::from)
                     .collect(Collectors.toList());
-
-            return profileImages;
         }
         return Collections.emptyList(); // null인 경우 빈 리스트 반환
     }
 
     @Transactional
-    public List<BoardImage> saveBoardImages(Board board, List<MultipartFile> multipartFile){
+    public List<BoardImage> saveBoardImages(Long boardId, List<MultipartFile> multipartFile){
+
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
 
         if (multipartFile != null) {
             List<BoardImage> boardImages = multipartFile.stream()
@@ -66,37 +85,40 @@ public class ImageService {
     }
 
     @Transactional
-    public List<ProfileImage> modifyProfileImage(User user, List<MultipartFile> multipartFile){
+    public List<ProfileImageDto> modifyProfileImage(Long userId, List<MultipartFile> multipartFile){
 
-        List<ProfileImage> existingImage = profileImageRepository.findByUser_Id(user.getId());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
+
+        List<ProfileImage> existingImage = profileImageRepository.findByUser_Id(userId);
         // 이미 해당하는 post에 파일 정보를 삭제처리
-        if(existingImage.size() > 0){
+        if(!existingImage.isEmpty()){
             existingImage.forEach(image -> {
                 profileImageRepository.delete(image);
-                //      amazonS3.deleteObject(new DeleteObjectRequest(bucket, file.getSaveFileName())); // S3에서 삭제처리
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageUrl())); // S3에서 삭제처리
             });
         }
 
         if (multipartFile != null) {
-            List<ProfileImage> profileImages = multipartFile.stream()
+            return multipartFile.stream()
                     .map(image -> (ProfileImage) saveImage(image, "profile", user, null))
+                    .map(ProfileImageDto::from)
                     .collect(Collectors.toList());
-
-            return profileImages;
         }
         return Collections.emptyList(); // null인 경우 빈 리스트 반환
 
     }
 
     @Transactional
-    public List<BoardImage> modifyBoardImage(Board board, List<MultipartFile> multipartFile){
+    public List<BoardImage> modifyBoardImage(Long boardId, List<MultipartFile> multipartFile){
 
-        List<BoardImage> existingImage = boardImageRepository.findByBoard_Id(board.getId());
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+
+        List<BoardImage> existingImage = boardImageRepository.findByBoard_Id(boardId);
         // 이미 해당하는 post에 파일 정보를 삭제처리
-        if(existingImage.size() > 0){
+        if(!existingImage.isEmpty()){
             existingImage.forEach(image -> {
                 boardImageRepository.delete(image);
-                //      amazonS3.deleteObject(new DeleteObjectRequest(bucket, file.getSaveFileName())); // S3에서 삭제처리
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageUrl())); // S3에서 삭제처리
             });
         }
 
@@ -109,6 +131,31 @@ public class ImageService {
         }
         return Collections.emptyList(); // null인 경우 빈 리스트 반환
 
+    }
+
+    @Transactional
+    public void deleteProfileImage(Long userId, Long profileImageId) {
+        ProfileImage profileImage = profileImageRepository.findByIdAndUserId(profileImageId, userId).orElseThrow(ProfileImageNotFoundException::new);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, profileImage.getImageUrl()));
+        profileImageRepository.delete(profileImage);
+
+    }
+
+    @Transactional
+    public void setPrimaryProfileImage(Long userId, Long profileImageId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
+
+        Optional<ProfileImage> prevPrimaryImage = user.getProfileImages().stream()
+                .filter(ProfileImage::isPrimary)
+                .findAny();
+
+        prevPrimaryImage.ifPresent(image -> image.setPrimary(false));
+
+        ProfileImage nextPrimaryImage = profileImageRepository.findByIdAndUserId(profileImageId, userId).orElseThrow(ProfileImageNotFoundException::new);
+
+        if (!nextPrimaryImage.isPrimary()) {
+            nextPrimaryImage.setPrimary(true);
+        }
     }
 
     @Transactional // TODO : 여기엔 아마 트랜잭셔널 전파가 안 될거임. 프로필이나 보드가 이미지 저장하다가 롤백 시에 문제 있을듯. 변경 원하면 말하셈.
