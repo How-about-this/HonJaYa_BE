@@ -8,12 +8,12 @@ public class KakaoResponse implements OAuth2Response {
 
     private final Map<String, Object> account;
 
-    private final String proviedrId;
+    private final String providerId;
 
     public KakaoResponse(Map<String, Object> attributes) {
         this.properties = (Map<String, Object>) attributes.get("properties");
         this.account = (Map<String, Object>) attributes.get("kakao_account");
-        this.proviedrId = attributes.get("id").toString();
+        this.providerId = attributes.get("id").toString();
     }
 
     @Override
@@ -23,7 +23,7 @@ public class KakaoResponse implements OAuth2Response {
 
     @Override
     public String getProviderId() {
-        return this.proviedrId;
+        return this.providerId;
     }
 
     @Override

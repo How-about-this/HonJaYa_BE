@@ -21,9 +21,6 @@ public class BoardImage extends Image {
     @JoinColumn(name = "board")
     private Board board;
 
-    @Setter
-    private Boolean deleted = Boolean.FALSE;
-
     @Builder
     private BoardImage(String originalImageName, String saveImageName, String extension,String imageUrl, Board board) {
         super(originalImageName, saveImageName, extension, imageUrl);

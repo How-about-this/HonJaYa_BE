@@ -43,6 +43,7 @@ public abstract class Image extends BaseEntity{
      * Lob 는 긴 문자열을 처리해 줍니다.
      */
     @Lob
+    @Setter
     private String imageUrl;
 
     @Setter

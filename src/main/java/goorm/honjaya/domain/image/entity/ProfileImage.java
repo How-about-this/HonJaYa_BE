@@ -20,10 +20,8 @@ public class ProfileImage extends Image {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
-
     @Setter
-    private Boolean deleted = Boolean.FALSE;
+    private User user;
 
     @Builder
     private ProfileImage(String originalImageName, String saveImageName, String extension,String imageUrl, User user) {
