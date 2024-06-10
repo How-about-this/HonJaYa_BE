@@ -1,5 +1,6 @@
 package goorm.honjaya.domain.image.controller;
 
+import goorm.honjaya.domain.image.dto.ProfileImagesDeleteDto;
 import goorm.honjaya.domain.image.dto.ProfileImageDto;
 import goorm.honjaya.domain.image.service.ImageService;
 import goorm.honjaya.global.common.ApiResponse;
@@ -30,19 +31,18 @@ public class ImageController {
         return ApiResponse.success(profileImagesDto);
     }
 
-    @PutMapping("/users/{userId}/profile-images")
-    public ApiResponse<?> updateProfileImages(@PathVariable Long userId,
-                                              @RequestPart List<MultipartFile> multipartFiles) {
-
-        List<ProfileImageDto> profileImagesDto = imageService.modifyProfileImage(userId, multipartFiles);
-        return ApiResponse.success(profileImagesDto);
-    }
-
     @DeleteMapping("/users/{userId}/profile-images/{profileImageId}")
     public ApiResponse<?> deleteProfileImage(@PathVariable Long userId,
                                              @PathVariable Long profileImageId) {
 
         imageService.deleteProfileImage(userId, profileImageId);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/users/{userId}/profile-images")
+    public ApiResponse<?> deleteProfileImages(@PathVariable Long userId,
+                                              @RequestBody ProfileImagesDeleteDto deleteDto) {
+        imageService.deleteProfileImages(userId, deleteDto.getProfileImagesIds());
         return ApiResponse.success();
     }
 
