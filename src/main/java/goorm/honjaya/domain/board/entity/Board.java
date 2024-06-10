@@ -4,11 +4,13 @@ import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.image.entity.BoardImage;
 import goorm.honjaya.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 public class Board extends BaseEntity {
 
     @Id

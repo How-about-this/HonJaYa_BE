@@ -15,7 +15,7 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping("/user/{id}/profile")
+    @PostMapping("/users/{id}/profile")
     public ApiResponse<?> save(@PathVariable("id") Long id, @RequestBody ProfileDto profileDto) {
         profileService.save(id, profileDto);
         return ApiResponse.success();

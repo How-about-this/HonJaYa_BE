@@ -3,6 +3,7 @@ package goorm.honjaya.domain.user.service;
 import goorm.honjaya.domain.user.dto.ProfileDto;
 import goorm.honjaya.domain.user.entity.Profile;
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.entity.UserStatus;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.domain.user.repository.ProfileRepository;
 import goorm.honjaya.domain.user.repository.UserRepository;
@@ -21,7 +22,8 @@ public class ProfileService {
 
     @Transactional
     public void save(Long id, ProfileDto profileDto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFountException("유저를 찾을 수 없습니다."));
+        User user = userRepository.findById(id).orElseThrow(UserNotFountException::new);
+        user.setStatus(UserStatus.ACTIVE);
         Profile profile = profileDto.toProfile();
         profile.setUser(user);
         profileRepository.save(profile);

@@ -15,7 +15,7 @@ public class IdealController {
 
     private final IdealService idealService;
 
-    @PostMapping("/user/{id}/ideal")
+    @PostMapping("/users/{id}/ideal")
     public ApiResponse<?> save(@PathVariable("id") Long id, @RequestBody IdealDto idealDto) {
         idealService.save(id, idealDto);
         return ApiResponse.success();

@@ -30,7 +30,14 @@ public class User extends BaseEntity {
 
     private String role;
 
-    private String status;
+    private boolean isMatched;
+
+    private boolean isMatching; // 매칭 중 상태 추가
+
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();
@@ -45,7 +52,7 @@ public class User extends BaseEntity {
     private Ideal ideal;
 
     @Builder
-    private User(Long id, String username, String name, String token, String role, String status, Profile profile, Ideal ideal) {
+    private User(Long id, String username, String name, String token, String role, UserStatus status, Profile profile, Ideal ideal,  boolean isMatched, boolean isMatching) {
         this.id = id;
         this.username = username;
         this.name = name;
@@ -54,10 +61,20 @@ public class User extends BaseEntity {
         this.status = status;
         this.profile = profile;
         this.ideal = ideal;
+        this.isMatched = isMatched;
+        this.isMatching = isMatching;
     }
 
     public void addProfileImage(ProfileImage profileImage) {
         this.profileImages.add(profileImage);
         profileImage.setUser(this);
+    }
+
+    public void setMatched(boolean matched) {
+        isMatched = matched;
+    }
+
+    public void setMatching(boolean matching) {
+        isMatching = matching;
     }
 }
