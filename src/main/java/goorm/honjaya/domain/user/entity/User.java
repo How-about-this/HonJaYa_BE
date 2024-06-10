@@ -3,7 +3,6 @@ package goorm.honjaya.domain.user.entity;
 import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.board.entity.Board;
 import goorm.honjaya.domain.image.entity.ProfileImage;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,6 +1,5 @@
 package goorm.honjaya.global.error;
 
-import com.amazonaws.Response;
 import goorm.honjaya.domain.board.exception.BoardNotFoundException;
 import goorm.honjaya.domain.image.exception.ProfileImageNotFoundException;
 import goorm.honjaya.domain.user.exception.FailedLogoutException;

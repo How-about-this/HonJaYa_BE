@@ -7,7 +7,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -50,7 +49,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("refresh_token", refreshToken, 1209600));
         response.setStatus(HttpServletResponse.SC_OK);
         // 프론트엔드에서 리다이렉트를 받으면 헤더값은 바로 빼낼 수 없기 때문에, URL 파라미터로 access token을 전달
-        response.sendRedirect("https://k2b3bc621690aa.user-app.krampoline.com/landing/authcallback?access_token=" + accessToken);
+        response.sendRedirect("http://localhost:3000/landing/authcallback?access_token=" + accessToken);
 
     }
 

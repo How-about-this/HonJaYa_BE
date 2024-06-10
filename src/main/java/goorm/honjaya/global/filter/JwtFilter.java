@@ -1,6 +1,5 @@
 package goorm.honjaya.global.filter;
 
-import goorm.honjaya.domain.user.dto.UserDto;
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.util.JwtUtil;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
