@@ -1,5 +1,6 @@
 package goorm.honjaya.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.board.entity.Board;
 import goorm.honjaya.domain.image.entity.ProfileImage;
@@ -50,8 +51,13 @@ public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Ideal ideal;
 
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matched_user_id")
+    private User matchedUser;
+
     @Builder
-    private User(Long id, String username, String name, String token, String role, UserStatus status, Profile profile, Ideal ideal,  boolean isMatched, boolean isMatching) {
+    public User(Long id, String username, String name, String token, String role, UserStatus status, Profile profile, Ideal ideal, boolean isMatched, boolean isMatching, User matchedUser) {
         this.id = id;
         this.username = username;
         this.name = name;
@@ -62,6 +68,7 @@ public class User extends BaseEntity {
         this.ideal = ideal;
         this.isMatched = isMatched;
         this.isMatching = isMatching;
+        this.matchedUser = matchedUser;
     }
 
     public void addProfileImage(ProfileImage profileImage) {
@@ -75,5 +82,8 @@ public class User extends BaseEntity {
 
     public void setMatching(boolean matching) {
         isMatching = matching;
+    }
+    public void setMatchedUser(User matchedUser) {
+        this.matchedUser = matchedUser;
     }
 }
