@@ -1,20 +1,13 @@
 package goorm.honjaya.domain.image.controller;
 
 import goorm.honjaya.domain.image.dto.ProfileImageDto;
-import goorm.honjaya.domain.image.entity.Image;
-import goorm.honjaya.domain.image.entity.ProfileImage;
 import goorm.honjaya.domain.image.service.ImageService;
-import goorm.honjaya.domain.user.entity.User;
-import goorm.honjaya.domain.user.exception.UserNotFountException;
-import goorm.honjaya.domain.user.service.UserService;
 import goorm.honjaya.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

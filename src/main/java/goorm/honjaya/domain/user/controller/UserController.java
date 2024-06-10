@@ -1,7 +1,6 @@
 package goorm.honjaya.domain.user.controller;
 
 import goorm.honjaya.domain.user.dto.UserDto;
-import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.domain.user.service.UserService;
 import goorm.honjaya.global.auth.CustomOAuth2User;
