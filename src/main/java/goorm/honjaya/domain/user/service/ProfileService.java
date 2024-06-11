@@ -5,7 +5,6 @@ import goorm.honjaya.domain.user.entity.Profile;
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.domain.user.entity.UserStatus;
 import goorm.honjaya.domain.user.exception.ProfileNotFoundException;
-import goorm.honjaya.domain.user.exception.UnauthorizedAccessException;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.domain.user.repository.ProfileRepository;
 import goorm.honjaya.domain.user.repository.UserRepository;
@@ -38,16 +37,9 @@ public class ProfileService {
     }
 
     @Transactional
-    public void update(Long userId, Long profileId, ProfileDto profileDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFountException::new);
-
-        Profile profile = profileRepository.findById(profileId)
+    public void update(Long id, ProfileDto profileDto) {
+        Profile profile = profileRepository.findByUserId(id)
                 .orElseThrow(ProfileNotFoundException::new);
-
-        if (!profile.getUser().getId().equals(userId)) {
-            throw new UnauthorizedAccessException("요청하신 유저 아이디와 프로필 아이디가 불일치합니다.");
-        }
 
         profile.updateFrom(profileDto);
     }

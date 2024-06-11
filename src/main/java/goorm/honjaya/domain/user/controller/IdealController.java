@@ -12,23 +12,22 @@ public class IdealController {
 
     private final IdealService idealService;
 
-    @PostMapping("/users/{id}/ideals")
+    @PostMapping("/users/{id}/ideal")
     public ApiResponse<?> save(@PathVariable("id") Long id, @RequestBody IdealDto idealDto) {
         idealService.save(id, idealDto);
         return ApiResponse.success();
     }
 
-    @GetMapping("/users/{id}/ideals")
+    @GetMapping("/users/{id}/ideal")
     public ApiResponse<?> findById(@PathVariable Long id) {
         IdealDto idealDto = idealService.findByUserId(id);
         return ApiResponse.success(idealDto);
     }
 
-    @PutMapping("/users/{userId}/ideals/{idealId}")
+    @PutMapping("/users/{userId}/ideal")
     public ApiResponse<?> update(@PathVariable Long userId,
-                                 @PathVariable Long idealId,
                                  @RequestBody IdealDto idealDto) {
-        idealService.update(userId, idealId, idealDto);
+        idealService.update(userId, idealDto);
         return ApiResponse.success();
     }
 }

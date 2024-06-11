@@ -12,23 +12,22 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping("/users/{id}/profiles")
+    @PostMapping("/users/{id}/profile")
     public ApiResponse<?> save(@PathVariable("id") Long id, @RequestBody ProfileDto profileDto) {
         profileService.save(id, profileDto);
         return ApiResponse.success();
     }
 
-    @GetMapping("/users/{id}/profiles")
+    @GetMapping("/users/{id}/profile")
     public ApiResponse<?> findByUserId(@PathVariable("id") Long id) {
         ProfileDto profileDto = profileService.findByUserId(id);
         return ApiResponse.success(profileDto);
     }
 
-    @PutMapping("/users/{userId}/profiles/{profileId}")
-    public ApiResponse<?> update(@PathVariable Long userId,
-                                 @PathVariable Long profileId,
+    @PutMapping("/users/{id}/profile")
+    public ApiResponse<?> update(@PathVariable Long id,
                                  @RequestBody ProfileDto profileDto) {
-        profileService.update(userId, profileId, profileDto);
+        profileService.update(id, profileDto);
         return ApiResponse.success();
     }
 }

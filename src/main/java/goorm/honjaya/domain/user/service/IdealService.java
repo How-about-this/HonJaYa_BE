@@ -3,8 +3,8 @@ package goorm.honjaya.domain.user.service;
 import goorm.honjaya.domain.user.dto.IdealDto;
 import goorm.honjaya.domain.user.entity.Ideal;
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.exception.IdealNotFoundException;
 import goorm.honjaya.domain.user.exception.ProfileNotFoundException;
-import goorm.honjaya.domain.user.exception.UnauthorizedAccessException;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.domain.user.repository.IdealRepository;
 import goorm.honjaya.domain.user.repository.UserRepository;
@@ -36,16 +36,9 @@ public class IdealService {
     }
 
     @Transactional
-    public void update(Long userId, Long idealId, IdealDto idealDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFountException::new);
-
-        Ideal ideal = idealRepository.findById(idealId)
-                .orElseThrow(ProfileNotFoundException::new);
-
-        if (!ideal.getUser().getId().equals(userId)) {
-            throw new UnauthorizedAccessException("요청하신 유저 아이디와 프로필 아이디가 불일치합니다.");
-        }
+    public void update(Long id, IdealDto idealDto) {
+        Ideal ideal = idealRepository.findByUserId(id)
+                .orElseThrow(IdealNotFoundException::new);
 
         ideal.updateFrom(idealDto);
     }
