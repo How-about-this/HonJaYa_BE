@@ -4,8 +4,6 @@ import goorm.honjaya.domain.user.entity.Ideal;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 public class IdealDto {
 

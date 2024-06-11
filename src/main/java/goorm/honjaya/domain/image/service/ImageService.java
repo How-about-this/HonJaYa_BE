@@ -11,6 +11,8 @@ import goorm.honjaya.domain.image.dto.ProfileImageDto;
 import goorm.honjaya.domain.image.entity.BoardImage;
 import goorm.honjaya.domain.image.entity.Image;
 import goorm.honjaya.domain.image.entity.ProfileImage;
+import goorm.honjaya.domain.image.exception.CannotDeleteKakaoImageException;
+import goorm.honjaya.domain.image.exception.CannotDeletePrimaryImageException;
 import goorm.honjaya.domain.image.exception.ProfileImageNotFoundException;
 import goorm.honjaya.domain.image.repository.BoardImageRepository;
 import goorm.honjaya.domain.image.repository.ProfileImageRepository;
@@ -85,30 +87,6 @@ public class ImageService {
     }
 
     @Transactional
-    public List<ProfileImageDto> modifyProfileImage(Long userId, List<MultipartFile> multipartFile){
-
-        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
-
-        List<ProfileImage> existingImage = profileImageRepository.findByUser_Id(userId);
-        // 이미 해당하는 post에 파일 정보를 삭제처리
-        if(!existingImage.isEmpty()){
-            existingImage.forEach(image -> {
-                profileImageRepository.delete(image);
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageUrl())); // S3에서 삭제처리
-            });
-        }
-
-        if (multipartFile != null) {
-            return multipartFile.stream()
-                    .map(image -> (ProfileImage) saveImage(image, "profile", user, null))
-                    .map(ProfileImageDto::from)
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList(); // null인 경우 빈 리스트 반환
-
-    }
-
-    @Transactional
     public List<BoardImage> modifyBoardImage(Long boardId, List<MultipartFile> multipartFile){
 
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
@@ -117,8 +95,8 @@ public class ImageService {
         // 이미 해당하는 post에 파일 정보를 삭제처리
         if(!existingImage.isEmpty()){
             existingImage.forEach(image -> {
+                amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getSaveImageName())); // S3에서 삭제처리
                 boardImageRepository.delete(image);
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, image.getImageUrl())); // S3에서 삭제처리
             });
         }
 
@@ -136,9 +114,29 @@ public class ImageService {
     @Transactional
     public void deleteProfileImage(Long userId, Long profileImageId) {
         ProfileImage profileImage = profileImageRepository.findByIdAndUserId(profileImageId, userId).orElseThrow(ProfileImageNotFoundException::new);
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, profileImage.getImageUrl()));
+        if (profileImage.isKakaoImage()) {
+            throw new CannotDeleteKakaoImageException();
+        }
+        if (profileImage.isPrimary()) {
+            throw new CannotDeletePrimaryImageException();
+        }
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, profileImage.getSaveImageName()));
         profileImageRepository.delete(profileImage);
 
+    }
+
+    public void deleteProfileImages(Long userId, List<Long> profileImagesIds) {
+        List<ProfileImage> profileImages = profileImageRepository.findAllById(profileImagesIds);
+        for (ProfileImage profileImage : profileImages) {
+            if (profileImage.isKakaoImage()) {
+                throw new CannotDeleteKakaoImageException();
+            }
+            if (profileImage.isPrimary()) {
+                throw new CannotDeletePrimaryImageException();
+            }
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, profileImage.getSaveImageName()));
+            profileImageRepository.delete(profileImage);
+        }
     }
 
     @Transactional
@@ -225,6 +223,5 @@ public class ImageService {
         }
 
     }
-
 
 }

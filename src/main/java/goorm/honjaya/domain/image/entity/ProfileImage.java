@@ -17,11 +17,14 @@ public class ProfileImage extends Image {
 
     private boolean isPrimary = Boolean.FALSE;
 
+    private boolean isKakaoImage = Boolean.FALSE;
+
     @Builder
-    private ProfileImage(String originalImageName, String saveImageName, String extension,String imageUrl, User user, boolean isPrimary) {
+    private ProfileImage(String originalImageName, String saveImageName, String extension,String imageUrl, User user, boolean isPrimary, boolean isKakaoImage) {
         super(originalImageName, saveImageName, extension, imageUrl);
         this.user = user;
         this.isPrimary = isPrimary;
+        this.isKakaoImage = isKakaoImage;
     }
 
 }

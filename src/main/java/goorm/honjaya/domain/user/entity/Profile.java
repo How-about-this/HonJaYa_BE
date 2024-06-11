@@ -1,6 +1,7 @@
 package goorm.honjaya.domain.user.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
+import goorm.honjaya.domain.user.dto.ProfileDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,5 +53,17 @@ public class Profile extends BaseEntity {
         this.smoke = smoke;
         this.address = address;
         this.user = user;
+    }
+
+    public void updateFrom(ProfileDto profileDto) {
+        this.birthday = profileDto.getBirthday();
+        this.gender = profileDto.getGender();
+        this.height = profileDto.getHeight();
+        this.weight = profileDto.getWeight();
+        this.mbti = profileDto.getMbti();
+        this.religion = profileDto.getReligion();
+        this.drinkAmount = profileDto.getDrinkAmount();
+        this.smoke = profileDto.isSmoke();
+        this.address = profileDto.getAddress();
     }
 }
