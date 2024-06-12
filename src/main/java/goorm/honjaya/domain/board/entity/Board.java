@@ -32,7 +32,7 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board")

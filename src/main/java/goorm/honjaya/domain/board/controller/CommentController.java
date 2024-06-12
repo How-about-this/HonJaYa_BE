@@ -2,13 +2,10 @@ package goorm.honjaya.domain.board.controller;
 
 import goorm.honjaya.domain.board.Service.CommentService;
 import goorm.honjaya.domain.board.dto.CommentDto;
-import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.common.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +46,9 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/comments/{commentsId}")
-    public void deleteComment(@PathVariable Long commentsId) {
+    public ApiResponse<?> deleteComment(@PathVariable Long commentsId) {
         commentService.deleteComment(commentsId);
+        return ApiResponse.success();
     }
 
 }
