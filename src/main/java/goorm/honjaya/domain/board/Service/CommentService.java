@@ -11,8 +11,8 @@ import goorm.honjaya.global.auth.CustomOAuth2User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,7 @@ public class CommentService {
     public List<CommentDto> getAllCommentList(Long boardsId){
         boardRepository.findById(boardsId).orElseThrow(
                 () -> new IllegalArgumentException("아이디 존재하지 않음"));
-        List<Comment> comments = commentRepository.findByBoardIdOrderByModifiedAtDesc(boardsId);
+        List<Comment> comments = commentRepository.findByBoardIdOrderByCreatedAt(boardsId);
         log.info("게시판 아이디: {}", boardsId);
         return comments.stream()
                 .map(CommentDto::CommentToDto)
