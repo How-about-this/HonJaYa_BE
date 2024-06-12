@@ -1,7 +1,9 @@
-package goorm.honjaya.domain.board.Service;
+package goorm.honjaya.domain.board.service;
 
 import goorm.honjaya.domain.board.dto.BoardDto;
+import goorm.honjaya.domain.board.dto.BoardPageDto;
 import goorm.honjaya.domain.board.entity.Board;
+import goorm.honjaya.domain.board.entity.Category;
 import goorm.honjaya.domain.board.repository.BoardRepository;
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.domain.user.repository.UserRepository;
@@ -12,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -39,6 +41,7 @@ public class BoardService {
                 .title(boardDto.getTitle())
                 .user(user)
                 .content(boardDto.getContent())
+                .category(boardDto.getCategory())
                 .build();
 
         board = boardRepository.save(board);
@@ -53,6 +56,7 @@ public class BoardService {
 
         board.setTitle(boardDto.getTitle());
         board.setContent(boardDto.getContent());
+        board.setCategory(boardDto.getCategory());
 //        board = boardRepository.save(board);
         return BoardDto.toDto(board);
     }
@@ -68,8 +72,14 @@ public class BoardService {
 
 
     //페이징
-    public Page<BoardDto> getBoardsWithPagination(Pageable pageable) {
-        Page<Board> boards = boardRepository.findAll(pageable);
-        return boards.map(BoardDto::toDto);
+    public Page<BoardPageDto> getBoardsWithPagination(Pageable pageable, String category) {
+        if (category == null) {
+            Page<Board> boards = boardRepository.findAll(pageable);
+            return boards.map(BoardPageDto::from);
+        } else {
+            Category boardCategory = Objects.equals(category, "RECRUITMENT") ? Category.RECRUITMENT : Category.REVIEW;
+            Page<Board> boards = boardRepository.findByCategory(pageable, boardCategory);
+            return boards.map(BoardPageDto::from);
+        }
     }
 }

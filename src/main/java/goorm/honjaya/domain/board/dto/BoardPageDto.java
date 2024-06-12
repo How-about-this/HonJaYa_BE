@@ -8,25 +8,31 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-@Builder
-public class BoardDto {
+public class BoardPageDto {
     private Long id;
     private String title;
-    private String content;
     private String author;
     private Category category;
     private LocalDate date;
 
 
-    public static BoardDto toDto(Board board) {
-        return BoardDto.builder()
+    @Builder
+    private BoardPageDto(Long id, String title, String author, Category category, LocalDate date) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.category = category;
+        this.date = date;
+    }
+
+    public static BoardPageDto from(Board board) {
+        return BoardPageDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
-                .content(board.getContent())
                 .author(board.getUser().getName())
                 .category(board.getCategory())
                 .date(board.getCreatedAt().toLocalDate())
                 .build();
-    }
 
+    }
 }

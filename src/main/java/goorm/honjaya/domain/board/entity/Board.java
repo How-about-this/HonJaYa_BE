@@ -1,13 +1,11 @@
 package goorm.honjaya.domain.board.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.image.entity.BoardImage;
 import goorm.honjaya.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,9 @@ public class Board extends BaseEntity {
     private String title;
 
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

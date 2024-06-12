@@ -1,7 +1,8 @@
 package goorm.honjaya.domain.board.controller;
 
-import goorm.honjaya.domain.board.Service.BoardService;
+import goorm.honjaya.domain.board.service.BoardService;
 import goorm.honjaya.domain.board.dto.BoardDto;
+import goorm.honjaya.domain.board.dto.BoardPageDto;
 import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.common.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,10 +25,12 @@ public class BoardController {
 
     //페이징
     @GetMapping("/boards")
-    public Page<BoardDto> getBoards(
-            @PageableDefault (page= 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable ) {
+    public Page<BoardPageDto> getBoards(
+            @PageableDefault (page= 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(value = "category", required = false) String category) {
         log.info("전체 게시글 조회");
-        return boardService.getBoardsWithPagination(pageable);
+        log.info(category);
+        return boardService.getBoardsWithPagination(pageable, category);
     }
 
     //id별 조회
@@ -64,7 +62,7 @@ public class BoardController {
     }
 
     //삭제
-    @DeleteMapping("boards/{id}")
+    @DeleteMapping("/boards/{id}")
     public void deleteBoard(@PathVariable Long id) {
         boardService.delete(id);
         log.info("삭제 완료");
