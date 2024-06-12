@@ -40,6 +40,7 @@ public class CommentService {
                 () -> new IllegalArgumentException("아이디 존재하지 않음"));
         List<Comment> comments = commentRepository.findByBoardIdOrderByCreatedAt(boardsId);
         log.info("게시판 아이디: {}", boardsId);
+        log.info(comments.toString());
         return comments.stream()
                 .map(CommentDto::CommentToDto)
                 .collect(Collectors.toList());

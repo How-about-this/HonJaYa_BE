@@ -14,6 +14,7 @@ public class BoardDto {
     private String title;
     private String content;
     private String author;
+    private Long authorId;
     private Category category;
     private LocalDate date;
 
@@ -24,6 +25,7 @@ public class BoardDto {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .author(board.getUser().getName())
+                .authorId(board.getUser().getId())
                 .category(board.getCategory())
                 .date(board.getCreatedAt().toLocalDate())
                 .build();
