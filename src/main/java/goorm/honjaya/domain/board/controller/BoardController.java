@@ -63,8 +63,8 @@ public class BoardController {
 
     //삭제
     @DeleteMapping("/boards/{id}")
-    public void deleteBoard(@PathVariable Long id) {
+    public ApiResponse<?> deleteBoard(@PathVariable Long id) {
         boardService.delete(id);
-        log.info("삭제 완료");
+        return ApiResponse.success();
     }
 }
