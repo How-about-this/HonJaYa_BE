@@ -34,9 +34,4 @@ public class MatchingController {
     public UserDto getMatchedUser(@PathVariable Long userId) {
         return UserDto.from(matchingService.findUserById(userId).orElse(null));
     }
-
-    @GetMapping("/chatrooms/{userId}")
-    public List<ChatRoomDTO> getUserChatRooms(@PathVariable Long userId) {
-        return matchingService.findChatRoomsByUserId(userId);
-    }
 }
