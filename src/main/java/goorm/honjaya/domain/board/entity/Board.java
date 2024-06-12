@@ -4,13 +4,17 @@ import goorm.honjaya.domain.base.BaseEntity;
 import goorm.honjaya.domain.image.entity.BoardImage;
 import goorm.honjaya.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Board extends BaseEntity {
 
     @Id
@@ -22,12 +26,17 @@ public class Board extends BaseEntity {
 
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board")
     private List<BoardImage> boardImages = new ArrayList<>();
+
+
 }

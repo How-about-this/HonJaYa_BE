@@ -5,6 +5,8 @@ import goorm.honjaya.domain.image.exception.CannotDeleteKakaoImageException;
 import goorm.honjaya.domain.image.exception.CannotDeletePrimaryImageException;
 import goorm.honjaya.domain.image.exception.ProfileImageNotFoundException;
 import goorm.honjaya.domain.user.exception.FailedLogoutException;
+import goorm.honjaya.domain.user.exception.IdealNotFoundException;
+import goorm.honjaya.domain.user.exception.ProfileNotFoundException;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.global.common.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -62,6 +64,16 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(CannotDeletePrimaryImageException.class)
     public ResponseEntity<ApiResponse<?>> handleCannotDeletePrimaryImageException(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(exception.getMessage()));
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleProfileNotFoundException(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(exception.getMessage()));
+    }
+
+    @ExceptionHandler(IdealNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleIdealNotFoundException(RuntimeException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(exception.getMessage()));
     }
 }

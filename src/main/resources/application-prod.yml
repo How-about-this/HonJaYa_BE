@@ -49,3 +49,6 @@ logging:
       springframework:
         security: debug
         web: debug
+pay:
+  admin-key: ${ADMIN_KEY}
+  server-url: ${SERVER_URL}
