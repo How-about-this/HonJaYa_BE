@@ -1,6 +1,6 @@
 package goorm.honjaya.domain.board.controller;
 
-import goorm.honjaya.domain.board.service.BoardService;
+import goorm.honjaya.domain.board.Service.BoardService;
 import goorm.honjaya.domain.board.dto.BoardDto;
 import goorm.honjaya.domain.board.dto.BoardPageDto;
 import goorm.honjaya.global.auth.CustomOAuth2User;

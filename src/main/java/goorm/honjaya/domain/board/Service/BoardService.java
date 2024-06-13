@@ -1,4 +1,4 @@
-package goorm.honjaya.domain.board.service;
+package goorm.honjaya.domain.board.Service;
 
 import goorm.honjaya.domain.board.dto.BoardDto;
 import goorm.honjaya.domain.board.dto.BoardPageDto;
