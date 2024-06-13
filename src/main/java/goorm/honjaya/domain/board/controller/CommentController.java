@@ -1,6 +1,6 @@
 package goorm.honjaya.domain.board.controller;
 
-import goorm.honjaya.domain.board.Service.CommentService;
+import goorm.honjaya.domain.board.service.CommentService;
 import goorm.honjaya.domain.board.dto.CommentDto;
 import goorm.honjaya.global.auth.CustomOAuth2User;
 import goorm.honjaya.global.common.ApiResponse;

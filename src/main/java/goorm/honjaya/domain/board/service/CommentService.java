@@ -1,4 +1,4 @@
-package goorm.honjaya.domain.board.Service;
+package goorm.honjaya.domain.board.service;
 
 import goorm.honjaya.domain.board.dto.CommentDto;
 import goorm.honjaya.domain.board.entity.Board;
