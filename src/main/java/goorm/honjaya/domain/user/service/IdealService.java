@@ -3,6 +3,8 @@ package goorm.honjaya.domain.user.service;
 import goorm.honjaya.domain.user.dto.IdealDto;
 import goorm.honjaya.domain.user.entity.Ideal;
 import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.user.exception.IdealNotFoundException;
+import goorm.honjaya.domain.user.exception.ProfileNotFoundException;
 import goorm.honjaya.domain.user.exception.UserNotFountException;
 import goorm.honjaya.domain.user.repository.IdealRepository;
 import goorm.honjaya.domain.user.repository.UserRepository;
@@ -25,5 +27,19 @@ public class IdealService {
         Ideal ideal = idealDto.toIdeal();
         ideal.setUser(user);
         idealRepository.save(ideal);
+    }
+
+    public IdealDto findByUserId(Long id) {
+        Ideal ideal = idealRepository.findByUserId(id)
+                .orElseThrow(ProfileNotFoundException::new);
+        return IdealDto.from(ideal);
+    }
+
+    @Transactional
+    public void update(Long id, IdealDto idealDto) {
+        Ideal ideal = idealRepository.findByUserId(id)
+                .orElseThrow(IdealNotFoundException::new);
+
+        ideal.updateFrom(idealDto);
     }
 }

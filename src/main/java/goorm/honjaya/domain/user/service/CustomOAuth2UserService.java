@@ -52,6 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             ProfileImage profileImage = ProfileImage.builder()
                     .imageUrl(oAuth2Response.getProfileImage())
                     .isPrimary(true)
+                    .isKakaoImage(true)
                     .build();
 
             user.addProfileImage(profileImage);

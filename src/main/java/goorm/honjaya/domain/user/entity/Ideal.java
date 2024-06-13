@@ -1,6 +1,7 @@
 package goorm.honjaya.domain.user.entity;
 
 import goorm.honjaya.domain.base.BaseEntity;
+import goorm.honjaya.domain.user.dto.IdealDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,5 +54,18 @@ public class Ideal extends BaseEntity {
         this.drinkAmount = drinkAmount;
         this.smoke = smoke;
         this.user = user;
+    }
+
+    public void updateFrom(IdealDto idealDto) {
+        this.maxAge = idealDto.getMaxAge();
+        this.minAge = idealDto.getMinAge();
+        this.maxHeight = idealDto.getMaxHeight();
+        this.minHeight = idealDto.getMinHeight();
+        this.maxWeight = idealDto.getMaxWeight();
+        this.minWeight = idealDto.getMinWeight();
+        this.mbti = idealDto.getMbti();
+        this.religion = idealDto.getReligion();
+        this.drinkAmount = idealDto.getDrinkAmount();
+        this.smoke = idealDto.isSmoke();
     }
 }

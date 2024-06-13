@@ -1,29 +1,60 @@
 package goorm.honjaya.domain.chat.controller;
 
-import goorm.honjaya.domain.chat.entity.ChatRoom;
+import goorm.honjaya.domain.chat.ChatMessage;
+import goorm.honjaya.domain.chat.dto.ChatRoomDTO;
 import goorm.honjaya.domain.chat.service.ChatService;
-import goorm.honjaya.domain.user.entity.User;
+import goorm.honjaya.domain.chat.service.MatchingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/chat")
 public class ChatController {
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private ChatService chatService;
 
-    @PostMapping("/create")
-    public ResponseEntity<ChatRoom> createChatRoom(@RequestBody User[] users) {
-        if (users.length != 2) {
-            return ResponseEntity.badRequest().build();
-        }
-        ChatRoom chatRoom = chatService.createChatRoom(users[0], users[1]);
-        return ResponseEntity.ok(chatRoom);
+    @Autowired
+    private MatchingService matchingService;
+
+    // 채팅 메시지 처리
+    @MessageMapping("/chat.send/{roomId}")
+    public void sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String roomId) {
+        // 메시지 저장
+        chatService.saveChatMessage(roomId, chatMessage);
+        // 메시지 전송
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, chatMessage);
+    }
+
+    // 사용자가 채팅룸에 입장 시 처리
+    @MessageMapping("/chat.addUser/{roomId}")
+    public void addUser(@Payload ChatMessage chatMessage, @DestinationVariable String roomId) {
+        chatMessage.setType(ChatMessage.MessageType.JOIN);
+        chatService.saveChatMessage(roomId, chatMessage);
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, chatMessage);
+    }
+
+    // 채팅방 정보 조회
+    @GetMapping("/rooms/{userId}")
+    public List<ChatRoomDTO> getUserChatRooms(@PathVariable Long userId) {
+        return matchingService.findChatRoomsByUserId(userId);
+    }
+
+    // 채팅방 삭제
+    @DeleteMapping("/room/{roomId}")
+    public void deleteChatRoom(@PathVariable Long roomId) {
+        // 채팅 메시지 삭제
+        chatService.deleteChatMessages(roomId.toString());
+        // 채팅방 삭제
+        chatService.deleteChatRoom(roomId);
     }
 }
-

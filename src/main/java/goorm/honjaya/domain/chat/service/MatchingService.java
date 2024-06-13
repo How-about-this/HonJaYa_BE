@@ -1,24 +1,22 @@
 package goorm.honjaya.domain.chat.service;
 
+import goorm.honjaya.domain.chat.dto.ChatRoomDTO;
 import goorm.honjaya.domain.chat.entity.ChatRoom;
 import goorm.honjaya.domain.chat.repository.ChatRoomRepository;
+import goorm.honjaya.domain.user.dto.UserDto;
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class MatchingService {
-
-    private static final Logger logger = Logger.getLogger(MatchingService.class.getName());
 
     @Autowired
     private UserRepository userRepository;
@@ -26,124 +24,87 @@ public class MatchingService {
     @Autowired
     private ChatRoomRepository chatRoomRepository;
 
-    @Transactional
-    public User findUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Transactional
-    public synchronized void save(User user) {
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public synchronized Optional<User> matchUser(User user) {
-        logger.info("Finding match for user: " + user.getUsername());
-
-        user.setMatching(true);
-        save(user);
-
-        Optional<User> match = findMatch(user);
-        if (match.isPresent()) {
-            User matchedUser = match.get();
-            createChatRoom(user, matchedUser);
-            return Optional.of(matchedUser);
-        }
-
-        user.setMatching(false);
-        save(user);
-        return Optional.empty();
-    }
-
-    @Transactional
-    public synchronized Optional<User> findMatch(User user) {
-        List<User> potentialMatches = userRepository.findAll().stream()
-                .filter(u -> !u.isMatched() && u.isMatching() && !u.getId().equals(user.getId()))
-                .collect(Collectors.toList());
-
-        return potentialMatches.stream()
-                .map(u -> new MatchCandidate(u, calculateMatchScore(user, u)))
-                .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
-                .map(MatchCandidate::getUser)
-                .findFirst();
-    }
-
-    private int getAge(LocalDate birthday) {
-        return Period.between(birthday, LocalDate.now()).getYears();
-    }
-
-    @Transactional
-    public void createChatRoom(User user1, User user2) {
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.addParticipant(user1);
-        chatRoom.addParticipant(user2);
-        chatRoomRepository.save(chatRoom);
-
-        user1.setMatched(true);
-        user2.setMatched(true);
-        user1.setMatching(false);
-        user2.setMatching(false);
-        save(user1);
-        save(user2);
-    }
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    private double calculateMatchScore(User user1, User user2) {
-        double score = 0;
+    public Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
 
-        if (user1.getProfile().getBirthday() != null && user2.getProfile().getBirthday() != null) {
-            int ageDifference = Math.abs(getAge(user1.getProfile().getBirthday()) - getAge(user2.getProfile().getBirthday()));
-            if (ageDifference <= 10) {
-                score += (10 - ageDifference) * 10;
+    @Transactional
+    public synchronized UserDto matchUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty() || optionalUser.get().isMatched()) {
+            return null; // 유저를 찾을 수 없거나 이미 매칭된 경우 null 반환
+        }
+
+        User user = optionalUser.get();
+        user.setMatching(true);
+        userRepository.save(user);
+
+        List<User> potentialMatches = userRepository.findAll().stream()
+                .filter(u -> u.isMatching() && !u.equals(user) && !u.isMatched())
+                .collect(Collectors.toList());
+
+        User bestMatch = null;
+        int highestScore = -1;
+
+        for (User potentialMatch : potentialMatches) {
+            if (!potentialMatch.getProfile().getGender().equals(user.getProfile().getGender())) {
+                int score = calculateMatchScore(user, potentialMatch);
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestMatch = potentialMatch;
+                }
             }
         }
 
-        if (user1.getProfile().getAddress().equals(user2.getProfile().getAddress())) {
-            score += 25;
-        }
+        if (bestMatch != null) {
+            createChatRoom(user, bestMatch);
+            user.setMatched(true);
+            user.setMatchedUser(bestMatch);
+            bestMatch.setMatched(true);
+            bestMatch.setMatchedUser(user);
+            user.setMatching(false);
+            bestMatch.setMatching(false);
+            userRepository.save(user);
+            userRepository.save(bestMatch);
 
-        if (user1.getProfile().getMbti().equals(user2.getIdeal().getMbti())) {
-            score += 25;
-        }
+            // 매칭된 사용자에게 알림 전송
+            UserDto bestMatchDto = UserDto.from(bestMatch);
+            UserDto userDto = UserDto.from(user);
 
-        if (user1.getProfile().getReligion().equals(user2.getIdeal().getReligion())) {
-            score += 25;
-        }
+            messagingTemplate.convertAndSend("/topic/match/" + user.getId(), bestMatchDto);
+            messagingTemplate.convertAndSend("/topic/match/" + bestMatch.getId(), userDto);
 
-        if (user1.getProfile().getHeight() >= user2.getIdeal().getMinHeight() && user1.getProfile().getHeight() <= user2.getIdeal().getMaxHeight()) {
-            score += 25;
+            return userDto; // 매칭된 사용자 정보를 반환
         }
+        return null;
+    }
 
-        if (user1.getProfile().getWeight() >= user2.getIdeal().getMinWeight() && user1.getProfile().getWeight() <= user2.getIdeal().getMaxWeight()) {
-            score += 25;
+    public List<ChatRoomDTO> findChatRoomsByUserId(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            List<ChatRoom> chatRooms = chatRoomRepository.findByParticipants(userOptional.get());
+            return chatRooms.stream().map(ChatRoomDTO::from).collect(Collectors.toList());
         }
+        return null;
+    }
 
+    private int calculateMatchScore(User user, User potentialMatch) {
+        int score = 0;
+        // 매칭 점수 계산 로직 추가
         return score;
     }
 
-    public boolean isMatching(Long userId) {
-        User user = findUserById(userId);
-        return user != null && user.isMatching();
-    }
-
-    private static class MatchCandidate {
-        private final User user;
-        private final double score;
-
-        public MatchCandidate(User user, double score) {
-            this.user = user;
-            this.score = score;
-        }
-
-        public User getUser() {
-            return user;
-        }
-
-        public double getScore() {
-            return score;
-        }
+    private void createChatRoom(User user1, User user2) {
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.addParticipant(user1);
+        chatRoom.addParticipant(user2);
+        chatRoomRepository.save(chatRoom);
     }
 }
