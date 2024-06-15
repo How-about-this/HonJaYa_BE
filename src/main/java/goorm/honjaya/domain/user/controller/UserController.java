@@ -8,6 +8,7 @@ import goorm.honjaya.global.common.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,6 +21,12 @@ public class UserController {
     public ApiResponse<UserDto> findCurrentUser(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws UserNotFountException {
         String username = customOAuth2User.getUsername();
         UserDto userDto = userService.findByUsername(username);
+        return ApiResponse.success(userDto);
+    }
+
+    @GetMapping("/users/{id}")
+    public ApiResponse<UserDto> getById(@PathVariable Long id) {
+        UserDto userDto = userService.getById(id);
         return ApiResponse.success(userDto);
     }
 }

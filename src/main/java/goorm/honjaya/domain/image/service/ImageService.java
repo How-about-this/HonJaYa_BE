@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -51,8 +48,8 @@ public class ImageService {
 
     @Transactional(readOnly = true)
     public List<ProfileImageDto> findProfileImages(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFountException::new);
-        return user.getProfileImages().stream()
+        return profileImageRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
                 .map(ProfileImageDto::from)
                 .collect(Collectors.toList());
     }
