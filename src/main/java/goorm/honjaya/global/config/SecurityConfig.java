@@ -2,6 +2,7 @@ package goorm.honjaya.global.config;
 
 import goorm.honjaya.domain.user.service.CustomOAuth2UserService;
 import goorm.honjaya.global.auth.CustomSuccessHandler;
+import goorm.honjaya.global.common.RedisService;
 import goorm.honjaya.global.filter.JwtFilter;
 import goorm.honjaya.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
 
+    private final RedisService redisService;
+
     private final CustomSuccessHandler customSuccessHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -50,7 +53,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .oauth2Login(oauth2 -> oauth2

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -46,6 +47,12 @@ public class LogoutService {
         }
 
         redisService.delete(key);
+
+        String accessToken = request.getHeader("Authorization").substring(7);
+        if (!jwtUtil.isExpired(accessToken)) {
+            Duration expiration = Duration.ofMillis(jwtUtil.getExpiration(accessToken));
+            redisService.set(accessToken, "blacklisted", expiration);
+        }
 
         Cookie cookie = new Cookie("refresh_token", null);
         cookie.setMaxAge(0);

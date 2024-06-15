@@ -2,6 +2,7 @@ package goorm.honjaya.global.filter;
 
 import goorm.honjaya.domain.user.entity.User;
 import goorm.honjaya.global.auth.CustomOAuth2User;
+import goorm.honjaya.global.common.RedisService;
 import goorm.honjaya.global.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import java.io.PrintWriter;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisService redisService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -64,6 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
+        }
+
+        if (redisService.exists(originToken)) {
+            throw new AuthorizationServiceException("비정상적인 접근입니다.");
         }
 
         // 사용자명과 권한을 accessToken에서 추출
