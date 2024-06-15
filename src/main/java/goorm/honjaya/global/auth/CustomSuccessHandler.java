@@ -1,9 +1,9 @@
 package goorm.honjaya.global.auth;
 
 import goorm.honjaya.global.common.RedisService;
+import goorm.honjaya.global.util.CookieUtil;
 import goorm.honjaya.global.util.JwtUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
     private final RedisService redisService;
 
     @Override
@@ -38,28 +39,20 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // accessToken과 refreshToken 생성
         // accessToken 만료시간 : 1시간
-        String accessToken = jwtUtil.createJwt("access", username, role, 3600000L);
+        String accessToken = jwtUtil.createJwt("access", username, role, Duration.ofHours(1).toMillis());
         // refreshToken 만료시간 : 2주
-        String refreshToken = jwtUtil.createJwt("refresh", username, role, 1209600000L);
+        String refreshToken = jwtUtil.createJwt("refresh", username, role, Duration.ofDays(14).toMillis());
 
         // redis에 insert (key = username, value = refreshToken)
-        redisService.set(username, refreshToken, Duration.ofMillis(1209600000L));
+        redisService.set(username, refreshToken, Duration.ofDays(14L));
 
         // refreshToken은 쿠키를 통하여 응답
-        response.addCookie(createCookie("refresh_token", refreshToken, 1209600));
+        response.addCookie(cookieUtil.createCookie("refresh_token", refreshToken, (int) Duration.ofHours(14).toSeconds()));
         response.setStatus(HttpServletResponse.SC_OK);
         // 프론트엔드에서 리다이렉트를 받으면 헤더값은 바로 빼낼 수 없기 때문에, URL 파라미터로 access token을 전달
         response.sendRedirect("http://localhost:3000/landing/authcallback?access_token=" + accessToken);
 
     }
 
-    // 쿠키 생성 메서드
-    private Cookie createCookie(String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(maxAge);
-        cookie.setPath("/");
-//        cookie.setSecure();
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
+
 }
