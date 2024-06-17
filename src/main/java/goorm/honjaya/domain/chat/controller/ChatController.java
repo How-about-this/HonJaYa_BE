@@ -50,11 +50,17 @@ public class ChatController {
     }
 
     // 채팅방 삭제
-    @DeleteMapping("/room/{roomId}")
+    @DeleteMapping("/room/{roomId}") // 추가된 부분
     public void deleteChatRoom(@PathVariable Long roomId) {
         // 채팅 메시지 삭제
         chatService.deleteChatMessages(roomId.toString());
         // 채팅방 삭제
         chatService.deleteChatRoom(roomId);
+    }
+
+    // 채팅방에 있는 유저 정보 조회
+    @GetMapping("/room/{roomId}/users") // 추가된 부분
+    public List<ChatRoomDTO.ParticipantDto> getChatRoomUsers(@PathVariable Long roomId) {
+        return matchingService.findChatRoomUsersByRoomId(roomId);
     }
 }

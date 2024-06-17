@@ -4,6 +4,7 @@ import goorm.honjaya.domain.chat.ChatMessage;
 import goorm.honjaya.domain.chat.entity.ChatRoom;
 import goorm.honjaya.domain.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatService {
 
+    @Qualifier("chatRedisTemplate")
     private final RedisTemplate<String, Object> chatRedisTemplate;
     private final ChatRoomRepository chatRoomRepository;
 

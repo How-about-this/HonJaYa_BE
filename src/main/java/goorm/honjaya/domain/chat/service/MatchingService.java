@@ -95,6 +95,18 @@ public class MatchingService {
         return null;
     }
 
+    // 채팅방 ID로 유저 정보 조회
+    public List<ChatRoomDTO.ParticipantDto> findChatRoomUsersByRoomId(Long roomId) { // 추가된 부분
+        Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(roomId);
+        if (chatRoomOptional.isPresent()) {
+            ChatRoom chatRoom = chatRoomOptional.get();
+            return chatRoom.getParticipants().stream()
+                    .map(ChatRoomDTO.ParticipantDto::from)
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
     private int calculateMatchScore(User user, User potentialMatch) {
         int score = 0;
         // 매칭 점수 계산 로직 추가
