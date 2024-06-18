@@ -2,6 +2,7 @@ package goorm.honjaya.global.config;
 
 import goorm.honjaya.domain.user.service.CustomOAuth2UserService;
 import goorm.honjaya.global.auth.CustomSuccessHandler;
+import goorm.honjaya.global.common.RedisService;
 import goorm.honjaya.global.filter.JwtFilter;
 import goorm.honjaya.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -28,6 +30,8 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+
+    private final RedisService redisService;
 
     private final CustomSuccessHandler customSuccessHandler;
 
@@ -49,7 +53,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .oauth2Login(oauth2 -> oauth2
@@ -58,13 +62,17 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)));
 
         http
+                .logout().disable();
+
+        http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(new AntPathRequestMatcher("/reissue")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/ws/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/oauth2/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/payment/**")).permitAll()
+                        .anyRequest().authenticated()
                 );
 
         http
@@ -86,7 +94,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        configuration.setMaxAge(Duration.ofHours(1));
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

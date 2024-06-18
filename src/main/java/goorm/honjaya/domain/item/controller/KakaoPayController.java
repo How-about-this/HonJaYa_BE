@@ -6,6 +6,7 @@ import goorm.honjaya.domain.item.service.KakaoPayService;
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,8 @@ import java.util.Map;
 public class KakaoPayController {
 
     private final KakaoPayService kakaoPayService;
+    @Value("${pay.success-url}")
+    public String successUrl;
 
     /** 결제 준비 redirect url 받기 --> 상품명과 가격을 같이 보내줘야함 */
 
@@ -53,7 +56,7 @@ public class KakaoPayController {
             System.out.println("Controller method entered with id: " + id + " and pgToken: " + pgToken);
             kakaoPayService.getApprove(pgToken,id);
             response.setStatus(HttpStatus.SEE_OTHER.value());
-            response.setHeader("Location", "http://localhost:3000/");
+            response.setHeader("Location", successUrl+"/shop");
         }
         catch(Exception e){
         }
@@ -65,7 +68,7 @@ public class KakaoPayController {
     public void cancel(HttpServletResponse response) throws IOException {
         System.out.println(response);
         response.setStatus(HttpStatus.SEE_OTHER.value());
-        response.setHeader("Location", "http://localhost:3000/");
+        response.setHeader("Location", "http://localhost:3000/shop");
     }
     /**
      * 결제 실패

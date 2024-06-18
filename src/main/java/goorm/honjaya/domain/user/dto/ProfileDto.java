@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Data
 public class ProfileDto {
 
+    private String name;
+
     private LocalDate birthday;
 
     private String gender;
@@ -28,7 +30,8 @@ public class ProfileDto {
     private String address;
 
     @Builder
-    private ProfileDto(LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
+    private ProfileDto(String name, LocalDate birthday, String gender, int height, int weight, String mbti, String religion, String drinkAmount, boolean smoke, String address) {
+        this.name = name;
         this.birthday = birthday;
         this.gender = gender;
         this.height = height;
@@ -42,6 +45,7 @@ public class ProfileDto {
 
     public static ProfileDto from(Profile profile) {
         return ProfileDto.builder()
+                .name(profile.getUser().getName())
                 .birthday(profile.getBirthday())
                 .gender(profile.getGender())
                 .height(profile.getHeight())

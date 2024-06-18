@@ -56,6 +56,7 @@ public class Profile extends BaseEntity {
     }
 
     public void updateFrom(ProfileDto profileDto) {
+        this.user.setName(profileDto.getName());
         this.birthday = profileDto.getBirthday();
         this.gender = profileDto.getGender();
         this.height = profileDto.getHeight();

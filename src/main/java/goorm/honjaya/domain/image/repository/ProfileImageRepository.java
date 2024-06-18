@@ -12,6 +12,8 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
 
     List<ProfileImage> findByUser_Id(Long userId);
 
+    List<ProfileImage> findByUserIdOrderByCreatedAtDesc(Long userId);
+
     Optional<ProfileImage> findByIdAndUserId(Long id, Long userId);
 
 }

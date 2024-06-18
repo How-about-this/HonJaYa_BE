@@ -23,6 +23,7 @@ public class User extends BaseEntity {
 
     private String username;
 
+    @Setter
     private String name;
 
     @Setter

@@ -7,10 +7,20 @@ import lombok.Setter;
 @Setter
 public class ChatMessage {
     private MessageType type;
-    private String content;
+    private String msg;
     private String sender;
+    private String roomNum;
+    private String isOwnMessage;
+    private String createAt;
 
     public enum MessageType {
         CHAT, JOIN, LEAVE
     }
+//    private String id;
+//    private String msg;
+//    private String sender;
+//    private String receiver;
+//    private String roomNum;
+//    private String isOwnMessage;
+//    private String createAt;
 }

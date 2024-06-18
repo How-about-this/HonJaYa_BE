@@ -17,4 +17,10 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(UserNotFountException::new);
         return UserDto.from(user);
     }
+
+    public UserDto getById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(UserNotFountException::new);
+        return UserDto.from(user);
+    }
 }

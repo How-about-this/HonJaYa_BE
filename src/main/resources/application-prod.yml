@@ -52,3 +52,4 @@ logging:
 pay:
   admin-key: ${ADMIN_KEY}
   server-url: ${SERVER_URL}
+  success-url: ${SUCCESS_URL}

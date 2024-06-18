@@ -92,9 +92,9 @@ public class KakaoPayService {
 
         System.out.println("결제성공 다음 스텝..");
 
-        String userName = String.valueOf(id);
+//        String userName = String.valueOf(id);
 
-        User user = userRepository.findByUsername(userName)
+        User user = userRepository.findById(id)
                 .orElseThrow(()->new Exception("해당 유저가 존재하지 않습니다."));
         BuyHistory buyHistory = buyHistoryRepository.findTop1ByUserIdAndStatusOrderByBoughtDateDesc(user.getUsername(), "Pending");
 
