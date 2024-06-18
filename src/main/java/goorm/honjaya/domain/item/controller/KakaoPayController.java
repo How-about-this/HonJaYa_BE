@@ -3,20 +3,18 @@ package goorm.honjaya.domain.item.controller;
 import goorm.honjaya.domain.item.PayInfoDto;
 import goorm.honjaya.domain.item.pay.response.PayReadyResDto;
 import goorm.honjaya.domain.item.service.KakaoPayService;
-import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import goorm.honjaya.domain.item.pay.response.PayApproveResDto;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://k2b3bc621690aa.user-app.krampoline.com")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/payment")
@@ -68,7 +66,7 @@ public class KakaoPayController {
     public void cancel(HttpServletResponse response) throws IOException {
         System.out.println(response);
         response.setStatus(HttpStatus.SEE_OTHER.value());
-        response.setHeader("Location", "http://localhost:3000/shop");
+        response.setHeader("Location", "https://k2b3bc621690aa.user-app.krampoline.com/shop");
     }
     /**
      * 결제 실패

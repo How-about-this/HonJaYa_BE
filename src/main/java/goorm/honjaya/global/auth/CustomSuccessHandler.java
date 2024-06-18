@@ -50,7 +50,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(cookieUtil.createCookie("refresh_token", refreshToken, (int) Duration.ofHours(14).toSeconds()));
         response.setStatus(HttpServletResponse.SC_OK);
         // 프론트엔드에서 리다이렉트를 받으면 헤더값은 바로 빼낼 수 없기 때문에, URL 파라미터로 access token을 전달
-        response.sendRedirect("http://localhost:3000/landing/authcallback?access_token=" + accessToken);
+        response.sendRedirect("https://k2b3bc621690aa.user-app.krampoline.com/landing/authcallback?access_token=" + accessToken);
 
     }
 

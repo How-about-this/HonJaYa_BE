@@ -44,7 +44,7 @@ import org.springframework.util.LinkedMultiValueMap;
 //        // redirect할 url로 위에서 설명한 동작 과정에서 5번과 6번 사이 과정에서
 //        // 나온 결과로 이동할 url을 설정해 주는 것입니다.
 //        map.add("approval_url", "http://localhost:8080/api/payment/success"+"/"+id); // 성공 시 redirect url
-////        map.add("approval_url", "http://localhost:3000"+"/"+id); // 성공 시 redirect url
+////        map.add("approval_url", "https://k2b3bc621690aa.user-app.krampoline.com"+"/"+id); // 성공 시 redirect url
 //        map.add("cancel_url", "http://localhost:8080/api/payment/cancel"); // 취소 시 redirect url
 //        map.add("fail_url", "http://localhost:8080/api/payment/fail"); // 실패 시 redirect url
 //

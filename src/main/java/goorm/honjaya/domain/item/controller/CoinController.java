@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://k2b3bc621690aa.user-app.krampoline.com")
 @RestController
 @RequiredArgsConstructor
 public class CoinController {
