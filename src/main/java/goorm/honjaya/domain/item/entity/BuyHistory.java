@@ -13,6 +13,7 @@ public class BuyHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "buy_history_id")
     private Long id;
     private String userId;
     private LocalDateTime boughtDate;
