@@ -62,7 +62,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)));
 
         http
-                .logout().disable();
+                .logout(logout -> logout.disable());
 
         http
                 .authorizeHttpRequests((auth) -> auth
