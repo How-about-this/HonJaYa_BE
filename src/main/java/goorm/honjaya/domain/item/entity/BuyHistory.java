@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Table(name = "buy_history", uniqueConstraints = @UniqueConstraint(columnNames = "buy_history_id"))
 public class BuyHistory {
 
     @Id
