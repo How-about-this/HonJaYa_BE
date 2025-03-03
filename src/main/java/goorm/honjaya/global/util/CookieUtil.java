@@ -1,7 +1,8 @@
 package goorm.honjaya.global.util;
 
-import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
+
+import jakarta.servlet.http.Cookie;
 
 @Component
 public class CookieUtil {
@@ -11,7 +12,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(maxAge);
         cookie.setPath("/");
-//        cookie.setSecure();
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
         return cookie;
     }
